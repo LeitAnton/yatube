@@ -13,6 +13,8 @@ ALLOWED_HOSTS = []
 
 
 INSTALLED_APPS = [
+    'users',
+    'posts',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -20,7 +22,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'debug_toolbar',
-    'posts',
 ]
 
 MIDDLEWARE = [
@@ -98,3 +99,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+LOGIN_URL = "/auth/login/"
+LOGIN_REDIRECT_URL = "index"
