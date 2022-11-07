@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Отправить письмо{% endblock %}
+
+{% block content %}
+{% load user_filters %}
+
+<div class="row justify-content-center">
+  <div class="col-md-8 p-5">
+    <div class="card">
+      <div class="card-header">Отправить письмо</div>
+      <div class="card-body">
+        {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+          Вы ввели данные неправильно.
+        </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'contact' %}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ next }}">
+
+            {% for field in form %}
+              <div class="form-group row">
+                  <label for="{{ field.id_for_label }}" class="col-md-4 col-form-label text-md-right">{{ field.label }}</label>
+                  <div class="col-md-6">
+                      {{ field|add_class:"form-control" }}
+                  </div>
+              </div>
+            {% endfor %}
+
+          <div class="col-md-6 offset-md-4">
+              <button type="submit" class="btn btn-primary">
+                Отправить
+              </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
