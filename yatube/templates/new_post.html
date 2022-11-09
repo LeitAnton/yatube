@@ -16,7 +16,11 @@
         </div>
         {% endif %}
 
-        <form method="post" action="{% url 'new_post' %}">
+        <form method="post" action="{% if post_id %}
+                                        {% url 'post_edit' username=user.username post_id=post_id %}
+                                    {% else %}
+                                        {% url 'new_post' %}
+                                    {% endif %}">
           {% csrf_token %}
           <input type="hidden" name="next" value="{{ next }}">
 

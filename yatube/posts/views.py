@@ -30,18 +30,21 @@ def group_posts(request, slug):
 
 
 @login_required(redirect_field_name='login')
-def new_post(request, post=None, title='Новая запись', button='Добавить'):
+def new_post(request):
+    title = 'Новая запись'
+    button = 'Добавить'
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
-            post.author = request.user
+            user = request.user
+            post.author = user
             post.save()
-            return redirect('post', request.user, post.id)
+            return redirect('post', user, post.id)
 
-        return render(request, 'new_post.html', {'form': form})
+        return render(request, 'new_post.html', {'form': form, 'title': title, 'button': button})
 
-    form = PostForm(instance=post)
+    form = PostForm()
     return render(request, 'new_post.html', {'form': form, 'title': title, 'button': button})
 
 
@@ -65,6 +68,27 @@ def post_edit(request, username, post_id):
     author = get_object_or_404(User, username=username)
     if author == request.user:
         post = get_object_or_404(Post, author=author, id=post_id)
-        return new_post(request, post, 'Редактировать запись', 'Сохранить')
+        if request.method == 'POST':
+            form = PostForm(instance=post, data=request.POST)
+            if form.is_valid():
+                post = form.save(commit=False)
+                post.author = request.user
+                post.save()
+                return redirect('post', username, post.id)
+
+            return render(request, 'new_post.html', {'form': form,
+                                                     'title': 'Редактировать запись',
+                                                     'button': 'Сохранить',
+                                                     'username': username,
+                                                     'post_id': post_id
+                                                     })
+
+        form = PostForm(instance=post)
+        return render(request, 'new_post.html', {'form': form,
+                                                 'title': 'Редактировать запись',
+                                                 'button': 'Сохранить',
+                                                 'username': username,
+                                                 'post_id': post_id
+                                                 })
     else:
         return redirect('post', username, post_id)

@@ -39,7 +39,9 @@
                             {% include 'post.html' with post=post %}
                         {% endfor %}
                     {% else %}
-                        {% include 'post.html' with post=post %}
+                        {% if post%}
+                            {% include 'post.html' with post=post post_view=True %}
+                        {% endif %}
                     {% endif %}
 
                 {% if page.has_other_pages %}

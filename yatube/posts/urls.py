@@ -8,7 +8,7 @@ urlpatterns = [
     path('new/', new_post, name='new_post'),
     path('group/<slug:slug>/', group_posts, name="group"),
 
-    path('<str:username>/', profile, name='profile'),
-    path('<str:username>/<int:post_id>/', post_view, name='post'),
-    path('<str:username>/<int:post_id>/edit/', post_edit, name='post_edit'),
+    path('user/<str:username>/', profile, name='profile'),
+    path('user/<str:username>/<int:post_id>/', post_view, name='post'),
+    path('user/<str:username>/<int:post_id>/edit/', post_edit, name='post_edit'),
 ]
