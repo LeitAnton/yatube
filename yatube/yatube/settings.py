@@ -9,7 +9,12 @@ SECRET_KEY = 'django-insecure-zmhn0ww-e8#0hy*uwo*)_m6fom4ma#rsu*a@ho0d@04o**$$$n
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+        "localhost",
+        "127.0.0.1",
+        "[::1]",
+        "testserver",
+]
 
 INTERNAL_IPS = [
     "127.0.0.1",
@@ -18,6 +23,8 @@ INTERNAL_IPS = [
 INSTALLED_APPS = [
     'users',
     'posts',
+    'django.contrib.sites',
+    'django.contrib.flatpages',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -107,3 +114,5 @@ ADMINS = [
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
+
+SITE_ID = 1

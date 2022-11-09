@@ -1,5 +1,6 @@
-from django.contrib import admin
+from django.contrib.flatpages import views
 from django.urls import path, include
+from django.contrib import admin
 
 from .views import user_contact
 
@@ -7,8 +8,14 @@ from .views import user_contact
 urlpatterns = [
     path('', include("posts.urls")),
     path('contact/', user_contact, name='contact'),
+    path('about/', include('django.contrib.flatpages.urls')),
     path('auth/', include("users.urls")),
     path('auth/', include("django.contrib.auth.urls")),
     path('admin/', admin.site.urls),
     path('__debug__/', include('debug_toolbar.urls')),
+]
+
+urlpatterns += [
+        path('about-author/', views.flatpage, {'url': '/about-author/'}, name='about'),
+        path('about-spec/', views.flatpage, {'url': '/about-spec/'}, name='terms'),
 ]
