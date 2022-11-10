@@ -34,7 +34,7 @@ def new_post(request):
     title = 'Новая запись'
     button = 'Добавить'
     if request.method == 'POST':
-        form = PostForm(request.POST)
+        form = PostForm(request.POST or None, files=request.FILES or None)
         if form.is_valid():
             post = form.save(commit=False)
             user = request.user
@@ -69,7 +69,7 @@ def post_edit(request, username, post_id):
     if author == request.user:
         post = get_object_or_404(Post, author=author, id=post_id)
         if request.method == 'POST':
-            form = PostForm(instance=post, data=request.POST)
+            form = PostForm(request.POST or None, files=request.FILES or None, instance=post)
             if form.is_valid():
                 post = form.save(commit=False)
                 post.author = request.user

@@ -1,5 +1,6 @@
 from urllib.parse import urljoin
 
+from django.core.cache import cache
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -17,6 +18,7 @@ class TestProfile(TestCase):
 
         self.user = User.objects.create_user(self.username, self.email, self.password)
         self.post = Post.objects.create(text=self.first_text, author=self.user)
+
         self.urls = (
             reverse('index'),
             reverse('profile', kwargs={'username': self.username}),
@@ -59,3 +61,15 @@ class TestProfile(TestCase):
         for url in self.urls:
             response = self.auth_client.get(url)
             self.assertContains(response, post_edit.text)
+
+    def test_image_load(self):
+        cache.clear()
+        with open('media/posts/9098c2228dcbdaba4d0aa9b5d9343d26.jpg', 'rb') as img:
+            self.auth_client.post(
+                reverse('new_post'),
+                data={'text': 'Post with image', 'author': self.user, 'image': img},
+                follow=True
+            )
+            for url in self.urls[:2]:
+                response = self.auth_client.get(url)
+                self.assertContains(response, '<img')
