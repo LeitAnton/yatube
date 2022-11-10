@@ -10,10 +10,10 @@ SECRET_KEY = 'django-insecure-zmhn0ww-e8#0hy*uwo*)_m6fom4ma#rsu*a@ho0d@04o**$$$n
 DEBUG = True
 
 ALLOWED_HOSTS = [
-        "localhost",
-        "127.0.0.1",
-        "[::1]",
-        "testserver",
+    "localhost",
+    "127.0.0.1",
+    "[::1]",
+    "testserver",
 ]
 
 INTERNAL_IPS = [

@@ -1,3 +1,4 @@
+from django.conf.urls import handler404, handler500
 from django.contrib.flatpages import views
 from django.urls import path, include
 from django.contrib import admin
@@ -16,6 +17,9 @@ urlpatterns = [
 ]
 
 urlpatterns += [
-        path('about-author/', views.flatpage, {'url': '/about-author/'}, name='about'),
-        path('about-spec/', views.flatpage, {'url': '/about-spec/'}, name='terms'),
+    path('about-author/', views.flatpage, {'url': '/about-author/'}, name='about'),
+    path('about-spec/', views.flatpage, {'url': '/about-spec/'}, name='terms'),
 ]
+
+handler404 = "posts.views.page_not_found" # noqa
+handler500 = "posts.views.server_error" # noqa
