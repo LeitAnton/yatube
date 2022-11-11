@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Последние обновления на сайте{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <h1>Последние обновления на сайте</h1>
+    {% include 'menu.html' with what_page=what_page %}
+
+    <h1>{{ title }}</h1>
     {% for post in page %}
         {% include 'post.html' with post=post %}
     {% endfor %}

@@ -1,10 +1,10 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, get_list_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.views.decorators.cache import cache_page
 from django.core.paginator import Paginator
 
-from .models import Post, Group, Comment
+from .models import Post, Group, Comment, Follow
 from .forms import PostForm, CommentForm
 
 User = get_user_model()
@@ -24,7 +24,11 @@ def index(request):
                  .prefetch_related('comments')
                  )
     page, paginator = pagination(request, posts, 10)
-    return render(request, 'index.html', {'page': page, 'paginator': paginator})
+    return render(request, 'index.html', {'page': page,
+                                          'paginator': paginator,
+                                          'title': 'Последние обновления на сайте',
+                                          'index': True
+                                          })
 
 
 @cache_page(20, key_prefix='group_page')
@@ -60,6 +64,7 @@ def new_post(request):
 
 def profile(request, username):
     author = get_object_or_404(User, username=username)
+    following = Follow.objects.filter(user=request.user, author=author)
     posts = list(Post.objects.filter(author=author)
                  .select_related('author', 'group')
                  .prefetch_related('comments')
@@ -70,7 +75,8 @@ def profile(request, username):
     return render(request, 'profile.html', {'page': page,
                                             'paginator': paginator,
                                             'author': author,
-                                            'count': posts_count
+                                            'count': posts_count,
+                                            'following': following,
                                             })
 
 
@@ -130,6 +136,43 @@ def add_comment(request, username, post_id):
 
     form = CommentForm()
     return render(request, 'comments.html', {'form': form})
+
+
+@cache_page(20, key_prefix='follow_page')
+@login_required
+def follow_index(request):
+    follows = Follow.objects.filter(user=request.user)
+    posts = list(Post.objects.filter(author__following__in=follows)
+                 .select_related('author', 'group')
+                 .order_by('-pub_date')
+                 .prefetch_related('comments')
+                 )
+    print(posts)
+    page, paginator = pagination(request, posts, 10)
+    return render(request, 'index.html', {'page': page,
+                                          'paginator': paginator,
+                                          'title': 'Посты избранных авторов',
+                                          })
+
+
+@login_required
+def profile_follow(request, username):
+    author = get_object_or_404(User, username=username)
+    if request.user != author:
+        if not Follow.objects.filter(user=request.user, author=author):
+            follow = Follow.objects.create(user=request.user, author=author)
+            follow.save()
+    return redirect('profile', username)
+
+
+@login_required
+def profile_unfollow(request, username):
+    author = get_object_or_404(User, username=username)
+    if request.user != author:
+        author = get_object_or_404(User, username=username)
+        follow = get_object_or_404(Follow, user=request.user, author=author)
+        follow.delete()
+    return redirect('profile', username)
 
 
 def page_not_found(request, exception):
