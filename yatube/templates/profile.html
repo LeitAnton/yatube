@@ -4,6 +4,8 @@
 
 {% block header %}Профиль автора | {{ author.username }}{% endblock %}
 
+{% load user_filters %}
+
 {% block content %}
 <main role="main" class="container">
     <div class="row">
@@ -41,6 +43,7 @@
                     {% else %}
                         {% if post%}
                             {% include 'post.html' with post=post post_view=True %}
+                            {% include 'comments.html' %}
                         {% endif %}
                     {% endif %}
 

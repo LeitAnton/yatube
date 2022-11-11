@@ -20,4 +20,10 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
     group = models.ForeignKey(Group, on_delete=models.SET_NULL, related_name="posts", blank=True, null=True)
     image = models.ImageField(upload_to='posts/', blank=True, null=True)
-    
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
+    text = models.TextField()
+    date_created = models.DateTimeField(verbose_name="date created", auto_now_add=True)

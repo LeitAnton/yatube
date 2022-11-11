@@ -6,13 +6,14 @@
 
 {% block content %}
     <h1>{{ group.title }}</h1>
-    <p>{{ group.description }}</p>
-    {% for post in posts %}
-    <h3>
-        Автор: {{ post.author.get_full_name }}, Дата публикации: {{ post.pub_date|date:"d M Y" }}
-    </h3>
-    <p>{{ post.text|linebreaksbr }}</p>
+    <h5>{{ group.description }}</h5>
+    {% for post in page %}
+        {% include 'post.html' with post=post %}
     {% if not forloop.last %}<hr>{% endif %}
     {% endfor %}
+
+    {% if page.has_other_pages %}
+        {% include "paginator.html" with items=page paginator=paginator %}
+    {% endif %}
 
 {% endblock %}

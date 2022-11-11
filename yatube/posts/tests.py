@@ -64,7 +64,7 @@ class TestProfile(TestCase):
 
     def test_image_load(self):
         cache.clear()
-        with open('media/posts/9098c2228dcbdaba4d0aa9b5d9343d26.jpg', 'rb') as img:
+        with open('media/posts/test.jpg', 'rb') as img:
             self.auth_client.post(
                 reverse('new_post'),
                 data={'text': 'Post with image', 'author': self.user, 'image': img},
