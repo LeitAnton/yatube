@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
+from django.views.decorators.cache import cache_page
 from django.core.paginator import Paginator
 
 from .models import Post, Group, Comment
@@ -16,6 +17,7 @@ def pagination(request, posts, num):
     return page, paginator
 
 
+@cache_page(20, key_prefix='index_page')
 def index(request):
     posts = list(Post.objects.order_by('-pub_date')
                  .select_related('author', 'group')
@@ -25,10 +27,10 @@ def index(request):
     return render(request, 'index.html', {'page': page, 'paginator': paginator})
 
 
+@cache_page(20, key_prefix='group_page')
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
-    posts = list(
-                 Post.objects.filter(group=group)
+    posts = list(Post.objects.filter(group=group)
                  .select_related('author', 'group')
                  .order_by('-pub_date')
                  .prefetch_related('comments')
@@ -58,16 +60,24 @@ def new_post(request):
 
 def profile(request, username):
     author = get_object_or_404(User, username=username)
-    posts = Post.objects.filter(author=author).select_related('author').order_by('-pub_date')
+    posts = list(Post.objects.filter(author=author)
+                 .select_related('author', 'group')
+                 .prefetch_related('comments')
+                 .order_by('-pub_date')
+                 )
     page, paginator = pagination(request, posts, 10)
     posts_count = len(posts)
-    return render(request, 'profile.html', {'page': page, 'paginator': paginator, 'author': author, 'count': posts_count})
+    return render(request, 'profile.html', {'page': page,
+                                            'paginator': paginator,
+                                            'author': author,
+                                            'count': posts_count
+                                            })
 
 
 def post_view(request, username, post_id):
     author = get_object_or_404(User, username=username)
     post = get_object_or_404(Post, author=author, id=post_id)
-    comments = Comment.objects.filter(post=post)
+    comments = list(Comment.objects.filter(post=post))
     posts_count = Post.objects.filter(author=author).count()
     return render(request, 'profile.html', {'author': author, 'post': post, 'count': posts_count, 'items': comments})
 
