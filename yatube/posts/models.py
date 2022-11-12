@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-
+from django.db.models import Q, F
 
 User = get_user_model()
 
@@ -32,3 +32,15 @@ class Comment(models.Model):
 class Follow(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="follower")
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="following")
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'author'],
+                name='unique_user_author'
+            ),
+            models.CheckConstraint(
+                check=~Q(user=F('author')),
+                name='user_not_author'
+            )
+        ]
