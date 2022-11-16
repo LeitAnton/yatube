@@ -9,6 +9,8 @@ urlpatterns = [
     path('new/', views.new_post, name='new_post'),
 
     path('follow/', views.follow_index, name="follow"),
+
+    path('users/', views.users_view, name="users"),
     path("users/<str:username>/follow/", views.profile_follow, name="profile_follow"),
     path("users/<str:username>/unfollow/", views.profile_unfollow, name="profile_unfollow"),
 

@@ -6,9 +6,26 @@
     {% include 'menu.html' with what_page=what_page %}
 
     <h1>{{ title }}</h1>
+    {% if authors %}
+        {% for author in authors %}
+            <div class="card mb-3 mt-1 shadow-sm">
+                <div class="card-body">
+                        <p class="card-text">
+                            <a href="{% url 'profile' author.username %}">
+                                <strong class="d-block text-gray-dark">@{{ author.username }}</strong>
+                            </a>
+                            {{ author.get_full_name }}
+                        </p>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
     {% for post in page %}
         {% include 'post.html' with post=post %}
     {% endfor %}
+
+
 
     {% if page.has_other_pages %}
         {% include "paginator.html" with items=page paginator=paginator %}

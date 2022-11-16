@@ -2,10 +2,13 @@
 <div class="row">
     <ul class="nav nav-tabs">
         <li class="nav-item">
-            <a class="nav-link {% if index %}active{% endif %}" href="{% url 'index' %}">Все авторы</a>
+            <a class="nav-link {% if index %}active{% endif %}" href="{% url 'index' %}">Все посты</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {% if not index %}active{% endif %}" href="{% url 'follow' %}">Избранные авторы</a>
+            <a class="nav-link {% if follow %}active{% endif %}" href="{% url 'follow' %}">Избранные авторы</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if authors %}active{% endif %}" href="{% url 'users' %}">Список авторов</a>
         </li>
     </ul>
 </div>

@@ -31,6 +31,12 @@ def index(request):
                                           })
 
 
+@cache_page(29, key_prefix='users_page')
+def users_view(request):
+    authors = list(User.objects.all())
+    return render(request, 'index.html', {'authors': authors, 'title': 'Список авторов'})
+
+
 @cache_page(20, key_prefix='group_page')
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
@@ -90,9 +96,8 @@ def post_view(request, username, post_id):
 
 @login_required(redirect_field_name='login')
 def post_edit(request, username, post_id):
-    author = get_object_or_404(User, username=username)
-    if author == request.user:
-        post = get_object_or_404(Post, author=author, id=post_id)
+    if username == request.user.username:
+        post = get_object_or_404(Post, author__username=username, id=post_id)
         if request.method == 'POST':
             form = PostForm(request.POST or None, files=request.FILES or None, instance=post)
             if form.is_valid():
@@ -141,17 +146,16 @@ def add_comment(request, username, post_id):
 @cache_page(20, key_prefix='follow_page')
 @login_required
 def follow_index(request):
-    follows = Follow.objects.filter(user=request.user)
-    posts = list(Post.objects.filter(author__following__in=follows)
+    posts = list(Post.objects.filter(author__following__user=request.user)
                  .select_related('author', 'group')
                  .order_by('-pub_date')
                  .prefetch_related('comments')
                  )
-    print(posts)
     page, paginator = pagination(request, posts, 10)
     return render(request, 'index.html', {'page': page,
                                           'paginator': paginator,
                                           'title': 'Посты избранных авторов',
+                                          'follow': True
                                           })
 
 
